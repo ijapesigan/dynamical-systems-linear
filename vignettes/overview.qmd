@@ -1,0 +1,44 @@
+---
+title: Overview of Dynamical Systems
+---
+
+## Important concepts
+
+- **System**: A set of interrelated variables.
+- **Dynamical system**: A system in which the present state of the system depends on the previous states of the system.
+- **State space**: A $p$-dimensional space constituted by all possible values taken on by the variables of a system over an exteded period of time.
+- **Initial conditions**: A selected starting point in the state space.
+
+- **Trajectory in state space**: A set of states in a state space that evolves over time from initial conditions. A single instantiation of a dynamical system.
+- **Time derivative**: The instantaneous change in a variable (first derivative) and the associated higher-order changes (second and higher-order derivatives) with respect to time.
+- **Phase space:** A state space that includes time derivatives (in continuous-time framework), or previous (lagged)/future values (in discrete-time framwork) of a system.
+- **Phase portrait:** A geometric representation of the trajectories of a dynamical system in the phase space. Each set of initial conditions is represented by a different curve, or set of points.
+
+- **Deterministic:** A system in which the present state is entirely dependent on previous states of the system.
+- **Stochastic:** A system in which the present state is dependent on previous states of the system and random noise.
+
+## Discrete time dynamical system
+
+- Time is represented as integers.
+- Data is equally spaced.
+- Represented as
+
+    \begin{equation}
+        \mathrm{Process}_{i, t} = \mathrm{Process}_{i, t - 1} + \mathrm{Change\ functions} \left( \cdot \right) + \mathrm{Random\ noise}_{i, t}
+    \end{equation}
+
+    - $i$ person index
+    - $t$ discrete-valued time index
+    - $\mathrm{Process}_{i, t}$ vector of observed or latent processes
+
+## Why dynamical systems modeling?
+
+- Study the mechanism of change (stability and change).
+- Rationale for longitudinal research (Baltes & Nesselroade, 1979) 
+    - intraindividual change
+    - interindividual change in intraindividual change
+    - interrelationships in behavioral change
+    - determinants of intraindividual change
+    - determinants of interindividual change in intraindividual change
+
+See Cronbach & Furby, 1970, Nesselroade & Cable, 1974, Baltes & Nesselroade, 1979 for a historical accounting of studying change.
