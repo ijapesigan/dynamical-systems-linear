@@ -74,7 +74,7 @@ Let $\alpha = \theta_{0}$ and $\beta = 1 + \theta_{1}$. The deterministic simple
     y_{it} = \alpha + \beta y_{i(t - 1)} .
 \end{equation}
 
-Set an initial value $y_{i0}$ and then apply the function recursively.
+Set an initial condition $y_{i0}$ and then apply the function recursively.
 
 ```{r}
 #| echo: false
@@ -82,25 +82,25 @@ alpha <- 8
 beta <- 0.8
 y_i0 <- 0.001
 max_time = 100
-error_variance <- 1
+sigmasq <- 1
 key <- c(
   "alpha",
   "beta",
   "y_i0",
-  "error_variance",
+  "sigmasq",
   "max_time"
 )
 value <- c(
   alpha,
   beta,
   y_i0,
-  error_variance,
+  sigmasq,
   max_time
 )
 description <- c(
   "Intercept",
   "Slope",
-  "Initial value",
+  "Initial condition",
   "Error variance",
   "Maximum time"
 )
@@ -144,7 +144,7 @@ linear_constructor <- function(alpha,
 f <- linear_constructor(alpha = alpha, beta = beta)
 # initialize vector of doubles of length max_time
 y <- double(max_time)
-# set initial value y_i0 to the first element in y
+# set initial condition y_i0 to the first element in y
 y[1] <- y_i0
 # recursively apply the function from 2 to max_time and save results to y[2:max_time]
 for (time in 2:max_time) {
@@ -189,7 +189,7 @@ We can add random noise to the system
 \end{equation}
 
 ```{r}
-epsilon <- stats::rnorm(n = max_time, mean = 0, sd = sqrt(error_variance))
+epsilon <- stats::rnorm(n = max_time, mean = 0, sd = sqrt(sigmasq))
 ```
 
 ```{r}
@@ -228,13 +228,13 @@ plot(
       ", ",
       sigma^2,
       " = ",
-      error_variance_i,
+      sigmasq_i,
       "))"
     ),
     list(
       alpha_i = alpha,
       beta_i = beta,
-      error_variance_i = error_variance
+      sigmasq_i = sigmasq
     )
   )
 )
@@ -244,7 +244,7 @@ plot(
 #' Cobweb plot
 #'
 #' @param f A function with one input that describes the map.
-#' @param y_i0 Initial value.
+#' @param y_i0 Initial condition.
 #' @param max_time Maximum time.
 #' @param from The lower bound.
 #' @param to The upper bound.
@@ -297,7 +297,7 @@ cobweb(
   f = f,
   y_i0 = y_i0,
   max_time = max_time,
-  from = min(y),
+  from = 0,
   to = max(y)
 )
 ```
@@ -306,7 +306,7 @@ cobweb(
 #' Fixed point
 #'
 #' @param f A function with one input that describes the map.
-#' @param y_i0 Initial value.
+#' @param y_i0 Initial condition.
 #' @param tol Convergence criteria.
 fixed_point <- function(f,
                         y_i0,
@@ -376,10 +376,12 @@ y_{t + 1} = r y_{t} \left( 1 - \frac{y_{t}}{K} \right)
 \end{equation}
 
 ```{r}
+#' Deterministic Logistic Population Growth Constructor
+#' 
 #' @param r Numeric.
 #'   Growth rate.
 #' @param K Numeric.
-#'   Carring capacity.
+#'   Carrying capacity.
 logistic_constructor <- function(r,
                                  K) {
   return(
@@ -390,17 +392,17 @@ logistic_constructor <- function(r,
     }
   )
 }
-r <- 4
+r <- 1.5
 K <- 10
 f <- logistic_constructor(r = r, K = K)
 ```
 
 ```{r}
-# create function given alpha and beta
+# create function given r and K
 f <- logistic_constructor(r = r, K = K)
 # initialize vector of doubles of length max_time
 y <- double(max_time)
-# set initial value y_i0 to the first element in y
+# set initial condition y_i0 to the first element in y
 y[1] <- y_i0
 # recursively apply the function from 2 to max_time and save results to y[2:max_time]
 for (time in 2:max_time) {
@@ -411,7 +413,7 @@ cobweb(
   f = f,
   y_i0 = y_i0,
   max_time = max_time,
-  from = min(y),
+  from = 0,
   to = max(y)
 )
 fixed_point(
