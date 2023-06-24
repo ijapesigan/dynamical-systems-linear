@@ -80,7 +80,7 @@ Set an initial value $y_{i0}$ and then apply the function recursively.
 #| echo: false
 alpha <- 8
 beta <- 0.8
-y_i0 <- 0.0
+y_i0 <- 0.001
 max_time = 100
 error_variance <- 1
 key <- c(
@@ -238,4 +238,194 @@ plot(
     )
   )
 )
+```
+
+```{r}
+#' Cobweb plot
+#'
+#' @param f A function with one input that describes the map.
+#' @param y_i0 Initial value.
+#' @param max_time Maximum time.
+#' @param from The lower bound.
+#' @param to The upper bound.
+cobweb <- function(f,
+                   y_i0,
+                   max_time,
+                   from,
+                   to) {
+    x <- seq(
+      from = from,
+      to = to,
+      length.out = 1000L
+    )
+    y <- f(x)
+    plot(
+      x = x,
+      y = y,
+      type = "l",
+      col = "red",
+      lwd = 2,
+      xlim = c(from, to),
+      ylim = c(min(y), max(y) * 1.05),
+      xlab = expression(y[t]),
+      ylab = expression(y[t + 1]),
+      main = "Cobweb Plot",
+      xaxs = "i",
+      yaxs = "i"
+    )
+    abline(0, 1, lwd = 2)
+    y_new <- f(y_i0)
+    y_old <- y_i0
+    lines(
+      x = c(y_old, y_old),
+      y = c(0, y_new)
+    )
+    for (i in 1:max_time) {
+      lines(
+        x = c(y_old, y_new),
+        y = c(y_new, y_new)
+      )
+      y_old <- y_new
+      y_new <- f(y_new)
+      lines(
+        x = c(y_old, y_old),
+        y = c(y_old, y_new)
+      )
+    }
+}
+cobweb(
+  f = f,
+  y_i0 = y_i0,
+  max_time = max_time,
+  from = min(y),
+  to = max(y)
+)
+```
+
+```{r}
+#' Fixed point
+#'
+#' @param f A function with one input that describes the map.
+#' @param y_i0 Initial value.
+#' @param tol Convergence criteria.
+fixed_point <- function(f,
+                        y_i0,
+                        tol = 1e-11,
+                        max_time = 10000L) {
+  y_new <- f(y_i0)
+  y_old <- y_i0
+  iter <- 0
+  while (abs(y_new - y_old) > tol) {
+    y_old <- y_new
+    y_new <- f(y_new)
+    iter <- iter + 1
+    if (iter > max_time) {
+      break()
+      warning("Maximum time research without meeting the convergence criteria.")
+    }
+  }
+  return(y_new)
+}
+fixed_point(
+  f = f,
+  y_i0 = y_i0
+)
+```
+
+Let the fixed point be given by $y^{\ast}$ such that
+
+\begin{equation}
+\beta y^{\ast} + \alpha = y^{\ast}
+\end{equation}
+
+\begin{equation}
+\beta y^{\ast} + \alpha = y^{\ast}
+\end{equation}
+
+\begin{equation}
+\alpha = y^{\ast} - \beta y^{\ast}
+\end{equation}
+
+\begin{equation}
+\alpha = y^{\ast} (1 - \beta)
+\end{equation}
+
+\begin{equation}
+y^{\ast} = \frac{\alpha}{1 - \beta}
+\end{equation}
+
+```{r}
+f_sym <- expression(beta * y + alpha)
+D(f_sym, "y")
+```
+
+```{r}
+#| message: false
+#| warning: false
+library(Ryacas)
+f_sym <- ysym("beta * y + alpha")
+deriv(f_sym, "y")
+```
+
+Local stability depends only on $\beta$. Fixed point is stable if $\mid \beta \mid < 1$. Fixed point is unstable if $\mid \beta \mid > 1$.
+
+## Logistic growth model
+
+\begin{equation}
+y_{t + 1} = r y_{t} \left( 1 - \frac{y_{t}}{K} \right)
+\end{equation}
+
+```{r}
+#' @param r Numeric.
+#'   Growth rate.
+#' @param K Numeric.
+#'   Carring capacity.
+logistic_constructor <- function(r,
+                                 K) {
+  return(
+    function(y) {
+      return(
+        (r * y) * (1 - (y / K))
+      )
+    }
+  )
+}
+r <- 4
+K <- 10
+f <- logistic_constructor(r = r, K = K)
+```
+
+```{r}
+# create function given alpha and beta
+f <- logistic_constructor(r = r, K = K)
+# initialize vector of doubles of length max_time
+y <- double(max_time)
+# set initial value y_i0 to the first element in y
+y[1] <- y_i0
+# recursively apply the function from 2 to max_time and save results to y[2:max_time]
+for (time in 2:max_time) {
+  y[time] <- f(y[time - 1])
+}
+plot(y)
+cobweb(
+  f = f,
+  y_i0 = y_i0,
+  max_time = max_time,
+  from = min(y),
+  to = max(y)
+)
+fixed_point(
+  f = f,
+  y_i0 = y_i0
+)
+```
+
+```{r}
+f_sym <- expression((r * y) * (1 - (y / K)))
+D(f_sym, "y")
+```
+
+```{r}
+f_sym <- ysym("(r * y) * (1 - (y / K))")
+deriv(f_sym, "y")
 ```
