@@ -74,26 +74,26 @@ Let $\alpha = \theta_{0}$ and $\beta = 1 + \theta_{1}$. The deterministic simple
     y_{it} = \alpha + \beta y_{i(t - 1)} .
 \end{equation}
 
-Set an initial value $y_{i, 0}$ and then apply the function recursively.
+Set an initial value $y_{i0}$ and then apply the function recursively.
 
 ```{r}
 #| echo: false
 alpha <- 8
 beta <- 0.8
-y_0 <- 0.0
+y_i0 <- 0.0
 max_time = 100
 error_variance <- 1
 key <- c(
   "alpha",
   "beta",
-  "y_0",
+  "y_i0",
   "error_variance",
   "max_time"
 )
 value <- c(
   alpha,
   beta,
-  y_0,
+  y_i0,
   error_variance,
   max_time
 )
@@ -107,7 +107,7 @@ description <- c(
 symbol <- c(
   "$\\alpha$",
   "$\\beta$",
-  "$y_{i, 0}$",
+  "$y_{i0}$",
   "$\\sigma^{2}$",
   "$T$"
 )
@@ -144,8 +144,8 @@ linear_constructor <- function(alpha,
 f <- linear_constructor(alpha = alpha, beta = beta)
 # initialize vector of doubles of length max_time
 y <- double(max_time)
-# set initial value y_0 to the first element in y
-y[1] <- y_0
+# set initial value y_i0 to the first element in y
+y[1] <- y_i0
 # recursively apply the function from 2 to max_time and save results to y[2:max_time]
 for (time in 2:max_time) {
   y[time] <- f(y[time - 1])
